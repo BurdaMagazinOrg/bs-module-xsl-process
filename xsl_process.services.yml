@@ -1,0 +1,4 @@
+services:
+  plugin.manager.xsl_process:
+    class: Drupal\xsl_process\XslProcessorPluginManager
+    parent: default_plugin_manager
