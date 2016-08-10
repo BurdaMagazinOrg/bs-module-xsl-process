@@ -14,6 +14,10 @@ class StylesheetProcessor {
 
   protected $xsltProcessor;
 
+  /**
+   * StylesheetProcessor constructor.
+   * @param \Drupal\xsl_process\XslProcessorInterface $xslPlugin
+   */
   public function __construct(XslProcessorInterface $xslPlugin) {
     $this->domDocument = new DOMDocument();
     $this->xsltProcessor = new XSLTProcessor();
@@ -23,6 +27,17 @@ class StylesheetProcessor {
     $xslPlugin->registerPhpFunctions($this->xsltProcessor);
   }
 
+  /**
+   * @return \XSLTProcessor
+   */
+  public function getXsltProcessor() {
+    return $this->xsltProcessor;
+  }
+
+  /**
+   * @param string $xmlString
+   * @return string
+   */
   public function transform($xmlString) {
     $this->domDocument->loadXML($xmlString);
     return $this->xsltProcessor->transformToXml($this->domDocument);

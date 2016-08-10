@@ -12,8 +12,6 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 class XslProcessorPluginManager extends DefaultPluginManager {
 
   /**
-   * Constructs an IcecreamManager object.
-   *
    * @param \Traversable $namespaces
    *   An object that implements \Traversable which contains the root paths
    *   keyed by the corresponding namespace to look for plugin implementations,
@@ -24,9 +22,9 @@ class XslProcessorPluginManager extends DefaultPluginManager {
    */
   public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, ModuleHandlerInterface $module_handler) {
     parent::__construct('Plugin/xsl_processor', $namespaces, $module_handler, 'Drupal\xsl_process\XslProcessorInterface', 'Drupal\xsl_process\Annotation\XslProcessor');
-
     $this->setCacheBackend($cache_backend, 'xsl_process_processors');
   }
+
 }
 
 
