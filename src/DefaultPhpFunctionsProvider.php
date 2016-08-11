@@ -25,4 +25,18 @@ class DefaultPhpFunctionsProvider {
     return date('c', $timestamp);
   }
 
+  /**
+   * Concatenates non-empty strings.
+   *
+   * Needs to use variadic signature with splat operator as XSL cannot use arrays
+   * as arguments to php functions.
+   *
+   * @param string $delim
+   * @param array[string] ...$parts
+   * @return string
+   */
+  public static function concat($delim, ...$parts) {
+    return join($delim, array_filter($parts));
+  }
+
 }
