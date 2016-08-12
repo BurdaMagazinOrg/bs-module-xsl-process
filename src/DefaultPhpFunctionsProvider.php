@@ -6,6 +6,7 @@
 namespace Drupal\xsl_process;
 
 use Drupal\image\Entity\ImageStyle;
+use Drupal\user\Entity\User;
 
 class DefaultPhpFunctionsProvider {
 
