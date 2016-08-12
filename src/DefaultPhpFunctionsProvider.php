@@ -39,4 +39,11 @@ class DefaultPhpFunctionsProvider {
     return join($delim, array_filter($parts));
   }
 
+  public static function userDisplayName($uid) {
+    if ($user = User::load($uid)) {
+      return static::concat(' ', $user->field_forename->value, $user->field_surname->value);
+    }
+    return 'UNKNOWN';
+  }
+
 }
