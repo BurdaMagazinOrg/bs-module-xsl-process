@@ -1,0 +1,13 @@
+{
+  "name": "burdamagazinorg/xls_process",
+  "description": "BS XLS process module.",
+  "type": "drupal-module",
+  "authors": [
+    {
+      "name": "ITCru",
+      "email": "steffen.schlaer@it-cru.de"
+    }
+  ],
+  "minimum-stability": "dev",
+  "require": {}
+}
