@@ -1,6 +1,6 @@
 {
-  "name": "burdamagazinorg/xls_process",
-  "description": "BS XLS process module.",
+  "name": "burdamagazinorg/xsl_process",
+  "description": "BS XSL process module.",
   "type": "drupal-module",
   "authors": [
     {
