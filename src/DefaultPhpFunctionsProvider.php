@@ -5,6 +5,7 @@
 
 namespace Drupal\xsl_process;
 
+use Drupal\file\Entity\File;
 use Drupal\image\Entity\ImageStyle;
 use Drupal\user\Entity\User;
 
@@ -16,6 +17,10 @@ class DefaultPhpFunctionsProvider {
       return $style->buildUrl($path);
     }
     return false;
+  }
+
+  public static function fileUrl($file) {
+    return file_create_url($file);
   }
 
   public static function dateRfc($timestamp) {
