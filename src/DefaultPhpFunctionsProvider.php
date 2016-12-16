@@ -5,11 +5,11 @@
 
 namespace Drupal\xsl_process;
 
-use Drupal\file\Entity\File;
 use Drupal\image\Entity\ImageStyle;
 use Drupal\user\Entity\User;
+use Drupal\Component\Utility\UrlHelper;
 
-class DefaultPhpFunctionsProvider {
+abstract class DefaultPhpFunctionsProvider {
 
   public static function imageUrl($path, $style = 'default') {
     $style = ImageStyle::load($style);
@@ -17,6 +17,14 @@ class DefaultPhpFunctionsProvider {
       return $style->buildUrl($path);
     }
     return false;
+  }
+
+  public static function iriToUri($iri) {
+      return $iri;
+      $parts = UrlHelper::parse($iri);
+      $parts['path'] = UrlHelper::encodePath($parts['path']);
+      $parts['query'] = UrlHelper::buildQuery($parts['query']);
+      return static::glueUrl($parts);
   }
 
   public static function fileUrl($file) {
@@ -50,6 +58,19 @@ class DefaultPhpFunctionsProvider {
       return static::concat(' ', $user->field_forename->value, $user->field_surname->value);
     }
     return 'UNKNOWN';
+  }
+
+  protected static function glueUrl($parsed_url) {
+    $scheme   = !empty($parsed_url['scheme']) ? $parsed_url['scheme'] . '://' : '';
+    $host     = !empty($parsed_url['host']) ? $parsed_url['host'] : '';
+    $port     = !empty($parsed_url['port']) ? ':' . $parsed_url['port'] : '';
+    $user     = !empty($parsed_url['user']) ? $parsed_url['user'] : '';
+    $pass     = !empty($parsed_url['pass']) ? ':' . $parsed_url['pass']  : '';
+    $pass     = ($user || $pass) ? "$pass@" : '';
+    $path     = !empty($parsed_url['path']) ? $parsed_url['path'] : '';
+    $query    = !empty($parsed_url['query']) ? '?' . $parsed_url['query'] : '';
+    $fragment = !empty($parsed_url['fragment']) ? '#' . $parsed_url['fragment'] : '';
+    return "$scheme$user$pass$host$port$path$query$fragment";
   }
 
 }
