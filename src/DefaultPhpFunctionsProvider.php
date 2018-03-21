@@ -73,4 +73,13 @@ abstract class DefaultPhpFunctionsProvider {
     return "$scheme$user$pass$host$port$path$query$fragment";
   }
 
+  /**
+   * Make incomplete URLs complete again.
+   */
+  public static function completeURLs($text) {
+    $base_url = $GLOBALS['base_url'];
+    $text = str_replace('src="/', 'src="' . $base_url . '/', $text);
+    $text = str_replace('href="/', 'href="' . $base_url . '/', $text);
+    return $text;
+  }
 }
