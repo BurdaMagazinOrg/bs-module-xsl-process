@@ -91,9 +91,16 @@ abstract class DefaultPhpFunctionsProvider {
    * Make incomplete URLs complete again.
    */
   public static function completeURLs($text) {
-    $base_url = $GLOBALS['base_url'];
-    $text = str_replace('src="/', 'src="' . $base_url . '/', $text);
-    $text = str_replace('href="/', 'href="' . $base_url . '/', $text);
+    $frontendBaseUrl = static::getFrontendBaseUrl();
+    $sources = [
+      'src="/',
+      'href="/',
+    ];
+    $replacements = [
+      'src="' . $frontendBaseUrl . '/',
+      'href="' . $frontendBaseUrl . '/',
+    ];
+    str_replace($sources, $replacements, $text);
     return $text;
   }
 
