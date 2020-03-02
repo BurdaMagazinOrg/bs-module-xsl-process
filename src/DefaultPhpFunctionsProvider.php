@@ -8,6 +8,7 @@ namespace Drupal\xsl_process;
 use Drupal\image\Entity\ImageStyle;
 use Drupal\user\Entity\User;
 use Drupal\Component\Utility\UrlHelper;
+use Drupal\media_entity_instagram\Plugin\MediaEntity\Type\Instagram;
 
 abstract class DefaultPhpFunctionsProvider {
 
@@ -17,6 +18,19 @@ abstract class DefaultPhpFunctionsProvider {
       return $style->buildUrl($path);
     }
     return false;
+  }
+
+  public static function instagram($fieldValue) {
+    $instagramEmbedFetcher = \Drupal::service('media_entity_instagram.instagram_embed_fetcher');
+    foreach (Instagram::$validationRegexp as $pattern => $key) {
+      if (preg_match($pattern, $fieldValue, $matches)) {
+        return sprintf(
+          '<iframe width="320" height="320" frameBorder="0" src="https://www.instagram.com/p/%s/embed" frameborder="0"></iframe>',
+          $matches[$key]
+        );
+      }
+    }
+    return '';
   }
 
   public static function iriToUri($iri) {
@@ -31,7 +45,8 @@ abstract class DefaultPhpFunctionsProvider {
     return file_create_url($file);
   }
 
-  public static function dateRfc($timestamp) {
+  public static function dateRfc($date) {
+    $timestamp = strtotime($date);
     return date('r', $timestamp);
   }
 
@@ -53,11 +68,11 @@ abstract class DefaultPhpFunctionsProvider {
     return join($delim, array_filter($parts));
   }
 
-  public static function userDisplayName($uid) {
-    if ($user = User::load($uid)) {
-      return static::concat(' ', $user->field_forename->value, $user->field_surname->value);
+  public static function userDisplayName($uid, $anonymous_name = 'UNKNOWN') {
+    if ($uid > 0 && $user = User::load($uid)) {
+      return $user->get('field_forename')->value . ' ' . $user->get('field_surname')->value;
     }
-    return 'UNKNOWN';
+    return $anonymous_name;
   }
 
   protected static function glueUrl($parsed_url) {
@@ -77,9 +92,28 @@ abstract class DefaultPhpFunctionsProvider {
    * Make incomplete URLs complete again.
    */
   public static function completeURLs($text) {
-    $base_url = $GLOBALS['base_url'];
-    $text = str_replace('src="/', 'src="' . $base_url . '/', $text);
-    $text = str_replace('href="/', 'href="' . $base_url . '/', $text);
+    $frontendBaseUrl = static::getFrontendBaseUrl();
+    $sources = [
+      'src="/',
+      'href="/',
+    ];
+    $replacements = [
+      'src="' . $frontendBaseUrl . '/',
+      'href="' . $frontendBaseUrl . '/',
+    ];
+    str_replace($sources, $replacements, $text);
     return $text;
+  }
+
+  /**
+   * Get frontend base URL from burdastyle_headless settings or global base_url.
+   */
+  public static function getFrontendBaseUrl() {
+    global $base_url;
+    $config = \Drupal::config('burdastyle_headless.settings');
+    if ($frontendBaseUrl = $config->get('frontend_base_url')) {
+      return $frontendBaseUrl;
+    }
+    return $base_url;
   }
 }
