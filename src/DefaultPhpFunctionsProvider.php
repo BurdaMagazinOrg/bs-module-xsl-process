@@ -116,4 +116,16 @@ abstract class DefaultPhpFunctionsProvider {
     }
     return $base_url;
   }
+
+  /**
+   * Get complete URL for outgoing link.
+   */
+  public static function getCompleteUrl($url) {
+    $base_url = static::getFrontendBaseUrl();
+    // UrlHelper::parse does not give us the host.
+    $base_components = parse_url($base_url);
+    $url_components = parse_url($url);
+
+    return $base_components['scheme'] . '://' . $base_components['host'] . $url_components['path'];
+  }
 }
