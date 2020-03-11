@@ -12,6 +12,8 @@ use Drupal\media_entity_instagram\Plugin\MediaEntity\Type\Instagram;
 
 abstract class DefaultPhpFunctionsProvider {
 
+  private static $linkCounter = 0;
+
   public static function imageUrl($path, $style = 'default') {
     $style = ImageStyle::load($style);
     if ($style) {
@@ -107,7 +109,50 @@ abstract class DefaultPhpFunctionsProvider {
       'src="' . $frontendBaseUrl . '/',
       'href="' . $frontendBaseUrl . '/',
     ];
-    str_replace($sources, $replacements, $text);
+    $text = str_replace($sources, $replacements, $text, $num);
+
+    return $text;
+  }
+
+
+  /**
+   * Reset link counter.
+   */
+  public static function resetLinkCounter() {
+    self::$linkCounter = 0;
+  }
+
+  /**
+   * Remove internal URLs from text if count > 3, remove all external links.
+   */
+  public static function stripURLs($text) {
+    $frontendBaseUrl = static::getFrontendBaseUrl();
+    $counter = self::$linkCounter;
+
+    $strip_local_limit = (int) 3 - $counter;
+
+    /**
+     * Strategy: We replace up to $strip_local_limit internal links by a bogus
+     * html entity, then replace all remaining links, then replace the bogus
+     * links by real ones again.
+     */
+    $replacements = 0;
+    if ($strip_local_limit > 0) {
+      $pattern = '$<a [^>]*href="(?|(/[^"]*)|(' . $frontendBaseUrl . '[^"]*))"[^>]*>([^<]*)</a>$';
+      $text = preg_replace($pattern, '<keep href="$1">$2</keep>', $text, $strip_local_limit, $replacements);
+      self::$linkCounter += $replacements;
+    }
+
+    $pattern = '$<a [^>]*href="([^"]*)"[^>]*>([^<]*)</a>$';
+    $text = preg_replace($pattern, '$2', $text);
+
+    if ($replacements) {
+      $pattern = '$<keep href="(?|(/[^"]*)|(' . $frontendBaseUrl . '[^"]*))">([^<]*)</keep>$';
+      $text = preg_replace($pattern, '<a href="$1">$2</a>', $text);
+    }
+
+    $text = static::completeURLs($text);
+
     return $text;
   }
 
