@@ -72,7 +72,13 @@ abstract class DefaultPhpFunctionsProvider {
     if ($uid > 0 && $user = User::load($uid)) {
       return $user->get('field_forename')->value . ' ' . $user->get('field_surname')->value;
     }
-    return $anonymous_name;
+    if ($anonymous_name == 'UNKNOWN') {
+      $config = \Drupal::config('system.site');
+      return $config->get('name') . ' Redaktion';
+    }
+    else {
+      return $anonymous_name;
+    }
   }
 
   protected static function glueUrl($parsed_url) {
