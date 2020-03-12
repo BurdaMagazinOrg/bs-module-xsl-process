@@ -109,7 +109,7 @@ abstract class DefaultPhpFunctionsProvider {
       'src="' . $frontendBaseUrl . '/',
       'href="' . $frontendBaseUrl . '/',
     ];
-    $text = str_replace($sources, $replacements, $text, $num);
+    $text = str_replace($sources, $replacements, $text);
 
     return $text;
   }
