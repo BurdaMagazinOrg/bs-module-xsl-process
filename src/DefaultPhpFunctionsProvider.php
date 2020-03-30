@@ -8,7 +8,7 @@ namespace Drupal\xsl_process;
 use Drupal\image\Entity\ImageStyle;
 use Drupal\user\Entity\User;
 use Drupal\Component\Utility\UrlHelper;
-use Drupal\media_entity_instagram\Plugin\MediaEntity\Type\Instagram;
+use Drupal\media_entity_instagram\Plugin\media\Source\Instagram;
 
 abstract class DefaultPhpFunctionsProvider {
 
